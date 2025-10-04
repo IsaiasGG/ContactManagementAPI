@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
+    <PackageReference Include="MediatR" Version="12.5.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Domain\IF.ContactManagement.Domain\IF.ContactManagement.Domain.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\IF.ContactManagement.Infrastructure.Persistence\IF.ContactManagement.Infrastructure.Persistence.csproj" />
+    <ProjectReference Include="..\..\Transversal\IF.ContactManagement.Transversal.Common\IF.ContactManagement.Transversal.Common.csproj" />
+    <ProjectReference Include="..\IF.ContactManagement.Application.DTO\IF.ContactManagement.Application.DTO.csproj" />
+    <ProjectReference Include="..\IF.ContactManagement.Application.Interfaces\IF.ContactManagement.Application.Interfaces.csproj" />
+  </ItemGroup>
+
+</Project>
