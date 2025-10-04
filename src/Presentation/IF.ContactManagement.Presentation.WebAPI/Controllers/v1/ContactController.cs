@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Results;
 using IF.ContactManagement.Application.DTO.Contact;
 using IF.ContactManagement.Application.UseCases.Contact.Commands.AssignToFund;
@@ -227,7 +226,6 @@ namespace IF.ContactManagement.Presentation.WebAPI.Controllers.v1
         /// 400 Bad Request if validation fails or the request is invalid.  
         /// 401 Unauthorized if the user is not authenticated.
         /// </returns>
-
         [HttpPut("UpdateContact")]
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

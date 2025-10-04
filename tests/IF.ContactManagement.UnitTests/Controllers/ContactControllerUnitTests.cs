@@ -51,6 +51,15 @@ namespace IF.ContactManagement.UnitTests.Controllers
                 _deleteValidatorMock.Object,
                 _deleteFundValidatorMock.Object
             );
+
+            // Set up ControllerContext to avoid NullReferenceException in tests
+            _controller.ControllerContext = new ControllerContext
+            {
+                ActionDescriptor = new Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor
+                {
+                    ActionName = "Contact"
+                }
+            };
         }
 
         #region GetAllContacts
@@ -113,10 +122,13 @@ namespace IF.ContactManagement.UnitTests.Controllers
         public async Task GetByIdContacts_ReturnsBadRequest_WhenValidationFails()
         {
             _getByIdValidatorMock.Setup(v => v.ValidateAsync(It.IsAny<GetByIdQuery>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new ValidationResult(new[] { new FluentValidation.Results.ValidationFailure("ContactId", "Invalid") }));
+                .ReturnsAsync(new ValidationResult(new[] { new ValidationFailure("ContactId", "Invalid") }));
 
             var result = await _controller.GetByIdContacts(1);
-            Assert.IsType<BadRequestObjectResult>(result);
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+
+            var errorResponse = Assert.IsType<BadRequestResponse>(badRequestResult.Value);
+            Assert.Contains(errorResponse.Errors, e => e.Code == "ContactId" && e.Message == "Invalid");
         }
         #endregion
 
