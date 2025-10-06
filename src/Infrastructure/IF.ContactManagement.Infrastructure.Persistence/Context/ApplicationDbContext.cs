@@ -26,6 +26,7 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
         {
             UserId = tenantService.GetUserId();
             this.configuration = configuration;
+            //connectionString = configuration.GetConnectionString("ContactManagementDb");
         }
 
         public DbSet<Contact> Contacts => Set<Contact>();
@@ -73,8 +74,8 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
                 entity.Property(e => e.DeletedBy)
                       .HasMaxLength(36); // User who deleted the record
 
-                entity.Property(e => e.DeletedBy)
-                    .HasMaxLength(36); // User who deleted the record
+                entity.Property(e => e.IsDeleted)
+                    .HasMaxLength(36);
             });
 
             // Contact
@@ -107,8 +108,8 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
                 entity.Property(e => e.DeletedBy)
                       .HasMaxLength(36); // User who deleted the record
 
-                entity.Property(e => e.DeletedBy)
-                    .HasMaxLength(36); // User who deleted the record
+                entity.Property(e => e.IsDeleted)
+                    .HasMaxLength(36); 
             });
 
             // FundContact
@@ -145,8 +146,8 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
                 entity.Property(e => e.DeletedBy)
                       .HasMaxLength(36); // User who deleted the record
 
-                entity.Property(e => e.DeletedBy)
-                    .HasMaxLength(36); // User who deleted the record
+                entity.Property(e => e.IsDeleted)
+                    .HasMaxLength(36);
             });
 
 
@@ -286,8 +287,8 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
                 entity.Property(e => e.DeletedBy)
                       .HasMaxLength(36); // User who deleted the record
 
-                entity.Property(e => e.DeletedBy)
-                    .HasMaxLength(36); // User who deleted the record
+                entity.Property(e => e.IsDeleted)
+                    .HasMaxLength(36);
 
                 entity.Property(e => e.UserId).HasMaxLength(36);
 
@@ -334,9 +335,8 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
                 entity.Property(e => e.DeletedBy)
                       .HasMaxLength(36); // User who deleted the record
 
-                entity.Property(e => e.DeletedBy)
-                    .HasMaxLength(36); // User who deleted the record
-
+                entity.Property(e => e.IsDeleted)
+                    .HasMaxLength(36);
 
                 // create the foreign key for the Role
                 entity.HasOne(e => e.Role)
@@ -385,9 +385,8 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
                 entity.Property(e => e.DeletedBy)
                       .HasMaxLength(36); // User who deleted the record
 
-                entity.Property(e => e.DeletedBy)
-                    .HasMaxLength(36); // User who deleted the record
-
+                entity.Property(e => e.IsDeleted)
+                    .HasMaxLength(36);
 
                 entity.HasOne(e => e.User)
                                   .WithMany(p => p.UserPermissionsAssignments)
@@ -431,8 +430,8 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
                 entity.Property(e => e.DeletedBy)
                       .HasMaxLength(36); // User who deleted the record
 
-                entity.Property(e => e.DeletedBy)
-                    .HasMaxLength(36); // User who deleted the record
+                entity.Property(e => e.IsDeleted)
+                    .HasMaxLength(36);
 
                 entity.Property(e => e.Name).HasMaxLength(100);
                 entity.Property(e => e.Description).HasMaxLength(500);
@@ -480,8 +479,8 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
                 entity.Property(e => e.DeletedBy)
                       .HasMaxLength(36); // User who deleted the record
 
-                entity.Property(e => e.DeletedBy)
-                    .HasMaxLength(36); // User who deleted the record
+                entity.Property(e => e.IsDeleted)
+                    .HasMaxLength(36);
 
                 entity.Property(e => e.Name).HasMaxLength(100);
                 entity.Property(e => e.Description).HasMaxLength(500);
@@ -511,8 +510,8 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
                 entity.Property(e => e.DeletedBy)
                       .HasMaxLength(36); // User who deleted the record
 
-                entity.Property(e => e.DeletedBy)
-                    .HasMaxLength(36); // User who deleted the record
+                entity.Property(e => e.IsDeleted)
+                    .HasMaxLength(36);
 
                 entity.Property(e => e.Name).HasMaxLength(200);
                 entity.Property(e => e.Description).HasMaxLength(1000);
@@ -572,10 +571,13 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
                         break;
 
                     case EntityState.Deleted:
+
                         // Soft delete behavior (optional)
                         entry.State = EntityState.Modified;
                         entity.DeletedAt = now;
-                        entity.DeletedBy = user;
+
+                        if (string.IsNullOrEmpty(entity.DeletedBy))
+                            entity.DeletedBy = user;
                         entity.IsDeleted = true;
                         break;
                 }

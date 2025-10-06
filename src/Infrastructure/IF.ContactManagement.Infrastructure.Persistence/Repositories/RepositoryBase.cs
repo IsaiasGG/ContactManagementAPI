@@ -228,7 +228,7 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Repositories
             entity.DeletedBy = deletedBy;
             entity.IsDeleted = true; // <-- mark as soft deleted
 
-            _context.Entry(entity).State = EntityState.Modified;
+            _context.Entry(entity).State = EntityState.Deleted;
 
             await _context.SaveChangesAsync();
             return entity;

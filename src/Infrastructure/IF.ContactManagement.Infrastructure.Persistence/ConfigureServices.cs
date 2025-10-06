@@ -18,6 +18,9 @@ namespace IF.ContactManagement.Infrastructure.Persistence
     {
         public static IServiceCollection AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
         {
+            //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("ContactManagementDb"),
+            //        b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)
+            //     ));
 
             services.AddDbContext<ApplicationDbContext>(options =>
                  options.UseInMemoryDatabase("ContactManagementDb")

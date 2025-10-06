@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using IF.ContactManagement.Application.Interfaces.Repositories;
 using IF.ContactManagement.Application.Interfaces.Services;
-using IF.ContactManagement.Domain.Entities;
 using IF.ContactManagement.Transversal.Common;
 using MediatR;
 using Microsoft.Extensions.Logging;

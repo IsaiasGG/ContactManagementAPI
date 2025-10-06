@@ -1,11 +1,16 @@
 ﻿using FluentValidation;
+using IF.ContactManagement.Application.Interfaces.Repositories;
 
 namespace IF.ContactManagement.Application.UseCases.Contact.Commands.Update
 {
     public class UpdateCommandValidator : AbstractValidator<UpdateCommand>
     {
-        public UpdateCommandValidator() 
+        private readonly IContactRepository _contactRepository;
+
+        public UpdateCommandValidator(IContactRepository contactRepository)
         {
+            _contactRepository = contactRepository;
+
             // Id must be greater than 0
             RuleFor(x => x.Id)
                 .GreaterThan(0)
@@ -29,6 +34,15 @@ namespace IF.ContactManagement.Application.UseCases.Contact.Commands.Update
                 .Matches(@"^\+?[0-9\s\-]{7,15}$")
                 .When(x => !string.IsNullOrEmpty(x.PhoneNumber))
                 .WithMessage("Invalid phone number format.");
+
+            // Check if the contact is not deleted
+            RuleFor(x => x)
+                .MustAsync(async (dto, ct) =>
+                {
+                    var contact = await _contactRepository.GetByIdAsync(dto.Id);
+                    return contact != null && !contact.IsDeleted;
+                })
+                .WithMessage("Cannot update a deleted contact.");
         }
 
     }
