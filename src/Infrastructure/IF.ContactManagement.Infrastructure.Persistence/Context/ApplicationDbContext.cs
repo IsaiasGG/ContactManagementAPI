@@ -72,6 +72,9 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
 
                 entity.Property(e => e.DeletedBy)
                       .HasMaxLength(36); // User who deleted the record
+
+                entity.Property(e => e.DeletedBy)
+                    .HasMaxLength(36); // User who deleted the record
             });
 
             // Contact
@@ -103,6 +106,9 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
 
                 entity.Property(e => e.DeletedBy)
                       .HasMaxLength(36); // User who deleted the record
+
+                entity.Property(e => e.DeletedBy)
+                    .HasMaxLength(36); // User who deleted the record
             });
 
             // FundContact
@@ -138,6 +144,9 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
 
                 entity.Property(e => e.DeletedBy)
                       .HasMaxLength(36); // User who deleted the record
+
+                entity.Property(e => e.DeletedBy)
+                    .HasMaxLength(36); // User who deleted the record
             });
 
 
@@ -271,6 +280,15 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(36);
 
+                entity.Property(e => e.UpdatedBy)
+                   .HasMaxLength(36); // User who updated the record
+
+                entity.Property(e => e.DeletedBy)
+                      .HasMaxLength(36); // User who deleted the record
+
+                entity.Property(e => e.DeletedBy)
+                    .HasMaxLength(36); // User who deleted the record
+
                 entity.Property(e => e.UserId).HasMaxLength(36);
 
                 entity.HasOne(e => e.User)
@@ -309,6 +327,15 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
 
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(36);
+
+                entity.Property(e => e.UpdatedBy)
+                   .HasMaxLength(36); // User who updated the record
+
+                entity.Property(e => e.DeletedBy)
+                      .HasMaxLength(36); // User who deleted the record
+
+                entity.Property(e => e.DeletedBy)
+                    .HasMaxLength(36); // User who deleted the record
 
 
                 // create the foreign key for the Role
@@ -352,6 +379,15 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(36);
 
+                entity.Property(e => e.UpdatedBy)
+                   .HasMaxLength(36); // User who updated the record
+
+                entity.Property(e => e.DeletedBy)
+                      .HasMaxLength(36); // User who deleted the record
+
+                entity.Property(e => e.DeletedBy)
+                    .HasMaxLength(36); // User who deleted the record
+
 
                 entity.HasOne(e => e.User)
                                   .WithMany(p => p.UserPermissionsAssignments)
@@ -388,6 +424,15 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
 
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(36);
+
+                entity.Property(e => e.UpdatedBy)
+                   .HasMaxLength(36); // User who updated the record
+
+                entity.Property(e => e.DeletedBy)
+                      .HasMaxLength(36); // User who deleted the record
+
+                entity.Property(e => e.DeletedBy)
+                    .HasMaxLength(36); // User who deleted the record
 
                 entity.Property(e => e.Name).HasMaxLength(100);
                 entity.Property(e => e.Description).HasMaxLength(500);
@@ -429,6 +474,15 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(36);
 
+                entity.Property(e => e.UpdatedBy)
+                   .HasMaxLength(36); // User who updated the record
+
+                entity.Property(e => e.DeletedBy)
+                      .HasMaxLength(36); // User who deleted the record
+
+                entity.Property(e => e.DeletedBy)
+                    .HasMaxLength(36); // User who deleted the record
+
                 entity.Property(e => e.Name).HasMaxLength(100);
                 entity.Property(e => e.Description).HasMaxLength(500);
             });
@@ -450,6 +504,16 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
 
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(36);
+
+                entity.Property(e => e.UpdatedBy)
+                   .HasMaxLength(36); // User who updated the record
+
+                entity.Property(e => e.DeletedBy)
+                      .HasMaxLength(36); // User who deleted the record
+
+                entity.Property(e => e.DeletedBy)
+                    .HasMaxLength(36); // User who deleted the record
+
                 entity.Property(e => e.Name).HasMaxLength(200);
                 entity.Property(e => e.Description).HasMaxLength(1000);
             });
@@ -472,27 +536,55 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Context
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            // Create the validations for the entities that inherit from the class BaseAuditableEntity
-            foreach (var item in ChangeTracker.Entries().Where(e => e.State == EntityState.Added &&
-                                                                    e.Entity is BaseAuditableEntity))
+            var entries = ChangeTracker.Entries()
+                .Where(e => e.Entity is BaseAuditableEntity &&
+                            (e.State == EntityState.Added ||
+                             e.State == EntityState.Modified ||
+                             e.State == EntityState.Deleted));
+
+            foreach (var entry in entries)
             {
-                // TODO: Uncomment this in production
-                //if (string.IsNullOrEmpty(UserId))
-                //{
-                //    throw new Exception("UserId was not found at the moment of create the record");
-                //}
-                if (string.IsNullOrEmpty(UserId))
+                var entity = (BaseAuditableEntity)entry.Entity;
+                var now = DateTime.UtcNow;
+                var user = string.IsNullOrEmpty(UserId) ? ConstantsCreatedBy.System : UserId;
+
+                switch (entry.State)
                 {
-                    UserId = ConstantsCreatedBy.System;
+                    case EntityState.Added:
+                        // If CreatedBy has no value, use the UserId from the context
+                        if (string.IsNullOrEmpty(entity.CreatedBy))
+                            entity.CreatedBy = user;
+
+                        // Assign CreatedAt if it's not already set
+                        if (entity.CreatedAt == default)
+                            entity.CreatedAt = now;
+                        break;
+
+                    case EntityState.Modified:
+                        // Prevent modification of CreatedAt and CreatedBy
+                        entry.Property(nameof(BaseAuditableEntity.CreatedAt)).IsModified = false;
+                        entry.Property(nameof(BaseAuditableEntity.CreatedBy)).IsModified = false;
+
+                        if (string.IsNullOrEmpty(entity.UpdatedBy))
+                            entity.UpdatedBy = user;
+
+                        entity.UpdatedAt = now;
+                        break;
+
+                    case EntityState.Deleted:
+                        // Soft delete behavior (optional)
+                        entry.State = EntityState.Modified;
+                        entity.DeletedAt = now;
+                        entity.DeletedBy = user;
+                        entity.IsDeleted = true;
+                        break;
                 }
-
-                var entity = item.Entity as BaseAuditableEntity;
-                entity!.CreatedBy = UserId;
             }
-
 
             return base.SaveChangesAsync(cancellationToken);
         }
+
+
 
     }
 }

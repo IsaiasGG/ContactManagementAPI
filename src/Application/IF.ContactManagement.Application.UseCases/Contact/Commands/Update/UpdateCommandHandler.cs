@@ -28,9 +28,9 @@ namespace IF.ContactManagement.Application.UseCases.Contact.Commands.Update
             {
                 var contact = _mapper.Map<Domain.Entities.Contact>(request);
                 contact.UpdatedAt = DateTime.UtcNow;
-                contact.UpdatedBy = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "System";
+                var user = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "System";
 
-                var updateContact = await _unitOfWork.ContactRepository.UpdateAsync(contact);
+                var updateContact = await _unitOfWork.ContactRepository.UpdateAsync(contact, user);
 
                 if (updateContact != null)
                 {

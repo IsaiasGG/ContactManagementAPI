@@ -53,7 +53,7 @@ namespace IF.ContactManagement.Application.Interfaces.Repositories
 
         Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities);
 
-        Task<T> UpdateAsync(T entity);
+        Task<T> UpdateAsync(T entity, string updatedBy = "System");
 
         Task DeleteAsync(T entity);
 

@@ -1,6 +1,6 @@
 @IF.ContactManagement.Presentation.WebAPI_HostAddress = http://localhost:5147
 
-GET {{IF.ContactManagement.Presentation.WebAPI_HostAddress}}/weatherforecast/
+GET {{IF.ContactManagement.Presentation.WebAPI_HostAddress}}/auth/
 Accept: application/json
 
 ###

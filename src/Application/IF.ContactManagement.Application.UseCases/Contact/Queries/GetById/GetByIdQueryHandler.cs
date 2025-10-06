@@ -32,7 +32,7 @@ namespace IF.ContactManagement.Application.UseCases.Contact.Queries.GetById
                 if (contactList != null)
                 {
                     string? createdByName = contactList.CreatedBy != null
-                       ? await _identityService.GetUserNameByIdAsync(contactList.CreatedBy)
+                       ? await _identityService.GetUserNameAsync(contactList.CreatedBy)
                        : null;
 
                     string? updatedByName = contactList.UpdatedBy != null

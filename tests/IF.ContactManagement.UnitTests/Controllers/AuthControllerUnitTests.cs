@@ -33,7 +33,7 @@ namespace IF.ContactManagement.UnitTests.Controllers
                 }
             };
         }
-
+        #region Login
         [Fact]
         public async Task Login_ReturnsOk_WhenValidCredentials()
         {
@@ -107,5 +107,6 @@ namespace IF.ContactManagement.UnitTests.Controllers
             Assert.False(response.IsSuccess);
             Assert.Equal("Invalid credentials", response.Message);
         }
+        #endregion
     }
 }

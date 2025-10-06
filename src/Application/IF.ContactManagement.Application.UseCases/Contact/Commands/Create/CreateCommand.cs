@@ -5,7 +5,7 @@ namespace IF.ContactManagement.Application.UseCases.Contact.Commands.Create
 {
     public sealed record CreateCommand : IRequest<Response<bool>>
     {
-        public string Name { get; set; } = null!;
+        public string Name { get; set; }
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
 

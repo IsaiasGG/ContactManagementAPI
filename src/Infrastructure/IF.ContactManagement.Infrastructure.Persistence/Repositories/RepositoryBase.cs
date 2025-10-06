@@ -32,10 +32,9 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Repositories
         public async Task<T> AddAsync(T entity, string username)
         {
             var now = DateTime.UtcNow;
+            //_context.Set<T>().Attach(entity);
             entity.CreatedAt = now;
             entity.CreatedBy = username;
-
-            _context.Set<T>().Attach(entity);
             _context.Entry(entity).State = EntityState.Added;
 
             await _context.SaveChangesAsync();
@@ -224,18 +223,23 @@ namespace IF.ContactManagement.Infrastructure.Persistence.Repositories
         public async Task<T> SoftDeleteAsync(T entity, string deletedBy = "System")
         {
             var now = DateTime.UtcNow;
+
             entity.DeletedAt = now;
             entity.DeletedBy = deletedBy;
+            entity.IsDeleted = true; // <-- mark as soft deleted
+
             _context.Entry(entity).State = EntityState.Modified;
+
             await _context.SaveChangesAsync();
             return entity;
         }
 
-        public async Task<T> UpdateAsync(T entity)
+        public async Task<T> UpdateAsync(T entity, string updatedBy = "System")
         {
             var now = DateTime.UtcNow;
             _context.Set<T>().Attach(entity);
             entity.UpdatedAt = now;
+            entity.UpdatedBy = updatedBy;
             _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return entity;
