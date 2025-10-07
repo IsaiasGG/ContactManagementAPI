@@ -35,16 +35,6 @@ namespace IF.ContactManagement.Application.UseCases.Contact.Commands.Update
                 .When(x => !string.IsNullOrEmpty(x.PhoneNumber))
                 .WithMessage("Invalid phone number format.");
 
-            RuleFor(x => x)
-                .MustAsync(async (dto, ct) =>
-                {
-                    // Retrieve the contact by Id
-                    var contact = await _unitOfWork.ContactRepository.GetByIdAsync(dto.Id);
-
-                    // Validation fails if the contact does not exist or is marked as deleted
-                    return contact != null && !contact.IsDeleted;
-                })
-                .WithMessage("The contact does not exist or has been deleted.");
         }
 
     }
