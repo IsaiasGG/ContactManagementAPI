@@ -46,10 +46,10 @@ namespace IF.ContactManagement.Presentation.WebAPI.Controllers.v1
         }
 
         /// <summary>
-        /// Retrieves all available funds.
+        /// Retrieves all available contacts.
         /// </summary>
         /// <remarks>
-        /// This endpoint sends a <see cref="GetAllQuery"/> request through the mediator to fetch a list of funds.
+        /// This endpoint sends a <see cref="GetAllQuery"/> request through the mediator to fetch a list of contacts.
         /// </remarks>
         /// <returns>
         /// An <see cref="IActionResult"/> representing the result of the operation:
