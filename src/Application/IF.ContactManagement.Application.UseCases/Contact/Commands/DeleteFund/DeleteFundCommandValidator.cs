@@ -5,10 +5,10 @@ namespace IF.ContactManagement.Application.UseCases.Contact.Commands.DeleteFund
 {
     public class DeleteFundCommandValidator : AbstractValidator<DeleteFundCommand>
     {
-        private readonly IFundContactRepository _fundContactRepository;
-        public DeleteFundCommandValidator(IFundContactRepository fundContactRepository) 
+        private readonly IUnitOfWork _unitOfWork;
+        public DeleteFundCommandValidator(IUnitOfWork unitOfWork) 
         {
-            _fundContactRepository = fundContactRepository;
+            _unitOfWork = unitOfWork;
 
             // FundId must be greater than 0
             RuleFor(x => x.FundId)
@@ -22,7 +22,7 @@ namespace IF.ContactManagement.Application.UseCases.Contact.Commands.DeleteFund
 
             // Optional: check if the relationship exists
             RuleFor(x => x)
-                .MustAsync(async (dto, ct) => await _fundContactRepository.ExistsAsync(dto.FundId, dto.ContactId))
+                .MustAsync(async (dto, ct) => await _unitOfWork.FundContactRepository.ExistsAsync(dto.FundId, dto.ContactId))
                 .WithMessage("The FundContact relationship does not exist.");
         }
     }

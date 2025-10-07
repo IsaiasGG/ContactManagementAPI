@@ -5,11 +5,11 @@ namespace IF.ContactManagement.Application.UseCases.Contact.Commands.AssignToFun
 {
     public class AssignToFundCommandValidator : AbstractValidator<AssignToFundCommand>
     {
-        private readonly IFundContactRepository _fundContactRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AssignToFundCommandValidator(IFundContactRepository fundContactRepository)
+        public AssignToFundCommandValidator(IUnitOfWork unitOfWork)
         {
-            _fundContactRepository = fundContactRepository;
+            _unitOfWork = unitOfWork;
 
             // Basic validations
             RuleFor(x => x.FundId)
@@ -23,7 +23,7 @@ namespace IF.ContactManagement.Application.UseCases.Contact.Commands.AssignToFun
             // Business rule: the same Contact cannot be assigned to the same Fund more than once
             RuleFor(x => x)
                 .MustAsync(async (dto, ct) =>
-                    !await _fundContactRepository.ExistsAsync(dto.FundId, dto.ContactId))
+                    !await _unitOfWork.FundContactRepository.ExistsAsync(dto.FundId, dto.ContactId))
                 .WithMessage("The same Contact can only be assigned to a Fund once.");
         }
     }

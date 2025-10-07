@@ -5,11 +5,11 @@ namespace IF.ContactManagement.Application.UseCases.Contact.Queries.GetById
 {
     public class GetByIdQueryValidator : AbstractValidator<GetByIdQuery>
     {
-        private readonly IContactRepository _contactRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetByIdQueryValidator(IContactRepository contactRepository)
+        public GetByIdQueryValidator(IUnitOfWork unitOfWork)
         {
-            _contactRepository = contactRepository;
+            _unitOfWork = unitOfWork;
 
             // ContactId must be greater than 0
             RuleFor(x => x.ContactId)
@@ -18,7 +18,7 @@ namespace IF.ContactManagement.Application.UseCases.Contact.Queries.GetById
 
             // Check if the contact exists in the database
             RuleFor(x => x.ContactId)
-                .MustAsync(async (id, ct) => await _contactRepository.ExistsAsync(id))
+                .MustAsync(async (id, ct) => await _unitOfWork.ContactRepository.ExistsAsync(id))
                 .WithMessage("Contact with the provided ContactId does not exist.");
         }
     }

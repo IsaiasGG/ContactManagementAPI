@@ -5,11 +5,11 @@ namespace IF.ContactManagement.Application.UseCases.Contact.Queries.GetByFund
 {
     public class GetByFundQueryValidator : AbstractValidator<GetByFundQuery>
     {
-        private readonly IFundRepository _fundRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetByFundQueryValidator(IFundRepository fundRepository)
+        public GetByFundQueryValidator(IUnitOfWork unitOfWork)
         {
-            _fundRepository = fundRepository;
+            _unitOfWork = unitOfWork;
 
             // FundId must be greater than 0
             RuleFor(x => x.FundId)
@@ -18,7 +18,7 @@ namespace IF.ContactManagement.Application.UseCases.Contact.Queries.GetByFund
 
             // Check if the fund exists in the database
             RuleFor(x => x.FundId)
-                .MustAsync(async (id, ct) => await _fundRepository.ExistsAsync(id, ct))
+                .MustAsync(async (id, ct) => await _unitOfWork.FundRepository.ExistsAsync(id, ct))
                 .WithMessage("Fund with the provided FundId does not exist.");
         }
     }

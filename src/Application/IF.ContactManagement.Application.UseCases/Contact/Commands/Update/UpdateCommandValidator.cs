@@ -5,11 +5,11 @@ namespace IF.ContactManagement.Application.UseCases.Contact.Commands.Update
 {
     public class UpdateCommandValidator : AbstractValidator<UpdateCommand>
     {
-        private readonly IContactRepository _contactRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateCommandValidator(IContactRepository contactRepository)
+        public UpdateCommandValidator(IUnitOfWork unitOfWork)
         {
-            _contactRepository = contactRepository;
+            _unitOfWork = unitOfWork;
 
             // Id must be greater than 0
             RuleFor(x => x.Id)
@@ -35,14 +35,16 @@ namespace IF.ContactManagement.Application.UseCases.Contact.Commands.Update
                 .When(x => !string.IsNullOrEmpty(x.PhoneNumber))
                 .WithMessage("Invalid phone number format.");
 
-            // Check if the contact is not deleted
             RuleFor(x => x)
                 .MustAsync(async (dto, ct) =>
                 {
-                    var contact = await _contactRepository.GetByIdAsync(dto.Id);
+                    // Retrieve the contact by Id
+                    var contact = await _unitOfWork.ContactRepository.GetByIdAsync(dto.Id);
+
+                    // Validation fails if the contact does not exist or is marked as deleted
                     return contact != null && !contact.IsDeleted;
                 })
-                .WithMessage("Cannot update a deleted contact.");
+                .WithMessage("The contact does not exist or has been deleted.");
         }
 
     }
