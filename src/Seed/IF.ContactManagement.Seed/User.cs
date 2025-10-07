@@ -4,8 +4,6 @@ namespace IF.ContactManagement.Seed
 {
     public class User
     {
-        public static string DEFAULT_PASSWORD = "InvestorFlow123.-";
-
         public static List<Domain.Entities.User> GetDataSeed()
         {
             return new List<Domain.Entities.User>()

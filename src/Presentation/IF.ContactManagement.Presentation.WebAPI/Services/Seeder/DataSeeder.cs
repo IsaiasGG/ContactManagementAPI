@@ -9,14 +9,20 @@ namespace IF.ContactManagement.Presentation.WebAPI.Services.Seeder
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
+        private readonly IConfiguration _configuration;
+
+        private readonly string DEFAULT_PASSWORD;
 
         public DataSeeder(ApplicationDbContext context,
                           UserManager<User> userManager,
-                          RoleManager<Role> roleManager)
+                          RoleManager<Role> roleManager,
+                          IConfiguration configuration)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
+            _configuration = configuration;
+            DEFAULT_PASSWORD = _configuration["Security:DefaultPassword"];
         }
 
         public async Task SeedAll()
@@ -117,7 +123,7 @@ namespace IF.ContactManagement.Presentation.WebAPI.Services.Seeder
                 var existingUser = await _userManager.FindByEmailAsync(user.Email!);
                 if (existingUser == null)
                 {
-                    await _userManager.CreateAsync(user, Seed.User.DEFAULT_PASSWORD);
+                    await _userManager.CreateAsync(user, DEFAULT_PASSWORD);
                 }
             }
         }
